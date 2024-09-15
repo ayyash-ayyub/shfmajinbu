@@ -61,16 +61,19 @@ def scrape_website(base_url, site_config, max_articles=100):
     while len(all_articles) < max_articles:
         url = base_url.format(page=page)
         print(f"Scraping page {page}: {url}")
-        
+    
+        response = requests.get(url)
+        if response.status_code != 200:
+            print(f"Page {page} not found (status code {response.status_code}). Stopping pagination.")
+            break 
+
         articles = scrape_page(url, site_config)
         
-        # Stop if no articles found (end of pagination)
         if not articles:
             break
         
         all_articles.extend(articles)
         
-        # If more than max_articles, trim the list
         if len(all_articles) > max_articles:
             all_articles = all_articles[:max_articles]
             break
@@ -79,22 +82,23 @@ def scrape_website(base_url, site_config, max_articles=100):
 
     return all_articles
 
+
 # Define configurations for different websites
 site_configs = {
     'krebsonsecurity': {
-        'base_url': 'https://krebsonsecurity.com/page/{page}/?s=hacker',
+        'base_url': 'https://krebsonsecurity.com/page/{page}/?s=indonesia',
         'article_selector': 'article', 
         'title_selector': 'h2.entry-title', 
         'date_selector': 'div.adt', 
         'content_selector': 'div.entry-content' 
     },
-    # 'darkreading': {
-    #     'base_url': 'https://www.darkreading.com/latest-news?page={page}',
-    #     'article_selector': 'div.ListPreview-TitleWrapper',  
-    #     'title_selector': 'a',  
-    #     'date_selector': 'span.ListPreview-Date', 
-    #     'content_selector': 'div.ContentModule-Wrapper'  
-    # }
+    'darkreading': {
+        'base_url': 'https://www.darkreading.com/latest-news?page={page}',
+        'article_selector': 'div.ListPreview-TitleWrapper',  
+        'title_selector': 'a',  
+        'date_selector': 'span.ListPreview-Date', 
+        'content_selector': 'div.ContentModule-Wrapper'  
+    }
 }
 
 # Choose which site to scrape
