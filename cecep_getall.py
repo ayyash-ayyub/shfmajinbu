@@ -88,17 +88,17 @@ site_configs = {
         'date_selector': 'div.adt', 
         'content_selector': 'div.entry-content' 
     },
-    'thehackernews': {
-        'base_url': 'https://thehackernews.com',
-        'article_selector': 'div.body-post', 
-        'title_selector': 'h2.home-title', 
-        'date_selector': 'span.publish-date', 
-        'content_selector': 'div.articlebody' 
-    }
+    # 'thehackernews': {
+    #     'base_url': 'https://thehackernews.com',
+    #     'article_selector': 'div.body-post', 
+    #     'title_selector': 'h2.home-title', 
+    #     'date_selector': 'span.publish-date', 
+    #     'content_selector': 'div.articlebody' 
+    # }
 }
 
 # Choose which site to scrape
-selected_site = 'thehackernews'  # Change this to 'thehackernews' to scrape that site
+selected_site = 'krebsonsecurity'  # Change this to 'thehackernews' to scrape that site
 
 # Scrape a maximum of 100 articles
 site_config = site_configs[selected_site]

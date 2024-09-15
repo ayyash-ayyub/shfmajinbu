@@ -82,7 +82,7 @@ def scrape_website(base_url, site_config, max_articles=100):
 # Define configurations for different websites
 site_configs = {
     'krebsonsecurity': {
-        'base_url': 'https://krebsonsecurity.com/page/{page}/?s=security',
+        'base_url': 'https://krebsonsecurity.com/page/{page}/?s=hacker',
         'article_selector': 'article', 
         'title_selector': 'h2.entry-title', 
         'date_selector': 'div.adt', 
