@@ -1,48 +1,91 @@
-import requests
+import subprocess
+import csv
+import os
 
-# Your credentials
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAIlnvwEAAAAAepyHpwAs7h7XlffPJeK0D%2F6k3d8%3DmGLXnhhmmcxbyrsiWbvVydPcRRsPGyqxvCJbdwO03UJFwLCeyo"
 
-# Function to create headers for authentication
-def create_headers(bearer_token):
-    return {
-        "Authorization": f"Bearer {bearer_token}",
-        "User-Agent": "v2TweetLookupPython"
-    }
+filename_prefix = 'tweets_'
+filtered_filename = 'tweets_filtered.csv'
+hashtags = '#CyberAttack #Ransomware'
+limit = 100
+twitter_auth_token = '33d247556507cf5d685d56eff99a5d1739e413af'
+target_users = ['DailyDarkWeb','FalconFeeds.io', 'H4ckManac']
 
-# Function to get user ID from username
-def get_user_id(username, bearer_token):
-    url = f"https://api.twitter.com/2/users/by/username/{username}"
-    response = requests.get(url, headers=create_headers(bearer_token))
-    if response.status_code == 200:
-        return response.json()['data']['id']
+def run_tweet_harvest(search_query, user):
+    temp_filename = f'{filename_prefix}{user.replace(" ", "_")}.csv'
+    
+    command = [
+        'npx', '--yes', 'tweet-harvest@2.6.1',
+        '-o', temp_filename,
+        '-s', search_query,
+        '-l', str(limit),
+        '--token', twitter_auth_token
+    ]
+    
+    
+    result = subprocess.run(command, capture_output=True, text=True)
+    
+    
+    if result.returncode != 0:
+        print(f"Error running tweet-harvest for {user}:")
+        print(result.stderr)
+        return None
+    
+    print(f'Successfully saved tweets from {user} to {temp_filename}')
+    return temp_filename
+
+def filter_tweets_by_hashtags(input_filenames, output_filename, hashtags):
+    hashtag_set = set(hashtags.lower().split())
+    processed_files = set()
+    found_any = False
+    
+    with open(output_filename, mode='w', newline='', encoding='utf-8') as outfile:
+        writer = csv.writer(outfile)
+        header_written = False
+        
+        for filename in input_filenames:
+            if not os.path.isfile(filename):
+                print(f"File {filename} does not exist, skipping.")
+                continue
+
+            with open(filename, mode='r', encoding='utf-8') as infile:
+                reader = csv.DictReader(infile)
+                if not header_written:
+                    # Write header once
+                    fieldnames = reader.fieldnames
+                    writer.writerow(fieldnames)
+                    header_written = True
+                
+                for row in reader:
+                    tweet_text = row.get('text', '').lower()
+                    tweet_hashtags = set(part for part in tweet_text.split() if part.startswith('#'))
+                    
+                    # Check if any of the hashtags are present
+                    if hashtag_set.intersection(tweet_hashtags):
+                        found_any = True
+                        writer.writerow(row)
+        
+        if not found_any:
+            print('No tweets containing the hashtags were found.')
+    
+    
+    for file in processed_files:
+        os.remove(file)
+
+def get_tweets_from_users():
+    input_filenames = []
+    
+    for user in target_users:
+        
+        search_query = f'from:{user} lang:en'
+        temp_filename = run_tweet_harvest(search_query, user)
+        if temp_filename:
+            input_filenames.append(temp_filename)
+    
+    
+    if input_filenames:
+        filter_tweets_by_hashtags(input_filenames, filtered_filename, hashtags)
     else:
-        raise Exception(f"Error fetching user ID: {response.status_code} - {response.text}")
+        print('No tweets were fetched.')
 
-# Function to get tweets from user ID
-def get_user_tweets(user_id, bearer_token, max_results=10):
-    url = f"https://api.twitter.com/2/users/{user_id}/tweets"
-    params = {
-        "max_results": max_results
-    }
-    response = requests.get(url, headers=create_headers(bearer_token), params=params)
-    if response.status_code == 200:
-        return response.json()['data']
-    else:
-        raise Exception(f"Error fetching tweets: {response.status_code} - {response.text}")
-
-# Main function to fetch and display tweets
-def main(username):
-    try:
-        user_id = get_user_id(username, BEARER_TOKEN)
-        tweets = get_user_tweets(user_id, BEARER_TOKEN)
-        if tweets:
-            for tweet in tweets:
-                print(f"Tweet ID: {tweet['id']} - Tweet Text: {tweet['text']}")
-        else:
-            print("No tweets found for this user.")
-    except Exception as e:
-        print(str(e))
-
-# Replace 'H4ckManac' with the desired Twitter username
-main("H4ckManac")
+if __name__ == "__main__":
+    get_tweets_from_users()
