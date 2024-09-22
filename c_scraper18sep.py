@@ -99,13 +99,15 @@ site_configs = {
         'date_selector': 'span.ListPreview-Date', 
         'content_selector': 'div.ContentModule-Wrapper'  
     }
+
+    
 }
 
 # Choose which site want to scrape
 selected_site = 'darkreading'
 
 site_config = site_configs[selected_site]
-articles = scrape_website(site_config['pagination_url'], site_config, max_articles=1)
+articles = scrape_website(site_config['pagination_url'], site_config, max_articles=5)
 
 # Create DataFrame and export to Excel
 df = pd.DataFrame(articles)
