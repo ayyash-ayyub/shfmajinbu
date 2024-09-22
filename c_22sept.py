@@ -107,7 +107,10 @@ site_configs = {
         'title_selector': 'h2.entry-title', 
         'date_selector': 'div.adt', 
         'content_selector': 'div.entry-content' 
-    }
+    },
+
+
+
 }
 
 selected_site = 'krebsonsecurity'
