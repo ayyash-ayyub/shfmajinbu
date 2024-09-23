@@ -77,7 +77,12 @@ def scrape_page(url, site_config):
 
             # Scrape date
             date_tag = article.select_one(site_config.get('date_selector', ''))
-            date = date_tag.get_text(strip=True) if date_tag else 'No date'
+            if date_tag:
+                date = date_tag.get_text(strip=True)
+            else:
+                # Check if the date is available in another tag
+                date = 'No date'
+                print(f"Date not found for article: {title}")
 
             # Scrape content or full article from the detail link
             if detail_link:
@@ -129,11 +134,9 @@ site_configs = {
         'article_selector': 'div.article__list',
         'indicator': 'article__title',
         'title_selector': 'h3.article__title',
-        'date_selector': 'div.article__date',
+        'date_selector': 'div.article__date',  # Ensure this is correct by inspecting HTML
         'content_selector': 'div.read__content'
     },
-  
-  
 }
 
 # Choose which site to scrape
