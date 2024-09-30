@@ -100,6 +100,25 @@ site_configs = {
         'date_selector': 'span.ListPreview-Date', 
         'content_selector': 'div.ContentModule-Wrapper' 
     },
+
+    'darkreading_threat_intelligence': {
+        'base_url': 'https://www.darkreading.com',
+        'pagination_url': 'https://www.darkreading.com/threat-intelligence?page={page}',
+        'article_selector': 'div.ListPreview-ContentWrapper', 
+        'title_selector': 'a.ListPreview-Title', 
+        'date_selector': 'span.ListPreview-Date', 
+        'content_selector': 'div.ContentModule-Wrapper' 
+    },
+    'darkreading_cyberattacks_data_breaches': {
+        'base_url': 'https://www.darkreading.com',
+        'pagination_url': 'https://www.darkreading.com/cyberattacks-data-breaches?page={page}',
+        'article_selector': 'div.ListPreview-ContentWrapper', 
+        'title_selector': 'a.ListPreview-Title', 
+        'date_selector': 'span.ListPreview-Date', 
+        'content_selector': 'div.ContentModule-Wrapper' 
+    },
+
+    
     'krebsonsecurity': {
         'base_url': 'https://krebsonsecurity.com',
         'pagination_url': 'https://krebsonsecurity.com/page/{page}/?s=security',
@@ -113,10 +132,10 @@ site_configs = {
 
 }
 
-selected_site = 'krebsonsecurity'
+selected_site = 'darkreading'
 
 site_config = site_configs[selected_site]
-articles = scrape_website(site_config['base_url'], site_config, max_articles=30)
+articles = scrape_website(site_config['pagination_url'], site_config, max_articles=2)
 
 df = pd.DataFrame(articles)
 df.to_excel(f'{selected_site}_scraped_data_full_content.xlsx', index=False)
