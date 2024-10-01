@@ -118,6 +118,8 @@ site_configs = {
         'content_selector': 'div.ContentModule-Wrapper' 
     },
 
+
+
     
     'krebsonsecurity': {
         'base_url': 'https://krebsonsecurity.com',
@@ -132,10 +134,10 @@ site_configs = {
 
 }
 
-selected_site = 'darkreading'
+selected_site = 'krebsonsecurity'
 
 site_config = site_configs[selected_site]
-articles = scrape_website(site_config['pagination_url'], site_config, max_articles=2)
+articles = scrape_website(site_config['pagination_url'], site_config, max_articles=5)
 
 df = pd.DataFrame(articles)
 df.to_excel(f'{selected_site}_scraped_data_full_content.xlsx', index=False)

@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox
 import pandas as pd
 import os
 
@@ -13,8 +13,8 @@ class TwitterScraperGUI(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Twitter Scraper")
-        self.setGeometry(100, 100, 400, 300)
-        
+        self.setGeometry(100, 100, 400, 350)
+
         # Layout
         layout = QVBoxLayout()
 
@@ -34,6 +34,10 @@ class TwitterScraperGUI(QWidget):
         self.lang_label = QLabel("Language (e.g. en):")
         self.lang_input = QLineEdit(self)
 
+        # Limit input
+        self.limit_label = QLabel("Enter Tweet Limit:")
+        self.limit_input = QLineEdit(self)
+
         # Execute button
         self.run_button = QPushButton("Run Search", self)
         self.run_button.clicked.connect(self.run_search)
@@ -47,6 +51,8 @@ class TwitterScraperGUI(QWidget):
         layout.addWidget(self.to_date_input)
         layout.addWidget(self.lang_label)
         layout.addWidget(self.lang_input)
+        layout.addWidget(self.limit_label)
+        layout.addWidget(self.limit_input)
         layout.addWidget(self.run_button)
 
         self.setLayout(layout)
@@ -56,16 +62,17 @@ class TwitterScraperGUI(QWidget):
         from_date = self.from_date_input.text()
         to_date = self.to_date_input.text()
         lang = self.lang_input.text()
+        limit = self.limit_input.text()
 
         # Validate inputs
-        if not keyword or not from_date or not to_date or not lang:
+        if not keyword or not from_date or not to_date or not lang or not limit:
             QMessageBox.warning(self, "Input Error", "All fields must be filled out.")
             return
 
         try:
+            limit = int(limit)  # Ensure limit is an integer
             # Build the search keyword for tweet-harvest
             search_keyword = f'{keyword} since:{from_date} until:{to_date} lang:{lang}'
-            limit = 100  # Customize this as per your requirement
 
             # Output filename
             filename = 'result.csv'
@@ -80,6 +87,8 @@ class TwitterScraperGUI(QWidget):
 
             QMessageBox.information(self, "Success", "Search completed and result saved as hasil.xlsx.")
 
+        except ValueError:
+            QMessageBox.warning(self, "Input Error", "Tweet limit must be a valid number.")
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
 

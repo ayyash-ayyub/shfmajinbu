@@ -20,4 +20,3 @@ data ='result.csv'
 result = pd.read_csv(data)
 
 result.to_excel('hasil.xlsx', index=False)
-
