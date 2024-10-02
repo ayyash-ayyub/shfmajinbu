@@ -11,12 +11,20 @@ twitter_auth_token = '149d730626b18463799cd35c026c857751b9a9e2'
 
 
 # cari berdasarkan keyword
-filename = 'result.csv'
-search_keyword = 'cyber security since:2024-04-01 until:2024-09-09 lang:en'
-limit = 100
-npx -y tweet-harvest@2.6.1 -o "{filename}" -s "{search_keyword}" --tab "LATEST" -l {limit} --token {twitter_auth_token} # type: ignore
+# filename = 'result.csv'
+# search_keyword = 'cyber security since:2024-04-01 until:2024-09-09 lang:en'
+# limit = 100
+# npx -y tweet-harvest@2.6.1 -o "{filename}" -s "{search_keyword}" --tab "LATEST" -l {limit} --token {twitter_auth_token} # type: ignore
 
+
+# Crawl Data
+
+filename = 'cecep.csv'
+search_keyword = 'cybersecurity since:2023-04-01 until:2024-04-01 lang:id'
+limit = 50
+
+npx -y tweet-harvest@2.6.1 -o "{filename}" -s "{search_keyword}" --tab "LATEST" -l {limit} --token {twitter_auth_token}  # type: ignore
 data ='result.csv'
 result = pd.read_csv(data)
 
-result.to_excel('hasil.xlsx', index=False)
+result.to_excel('cecepmalam.xlsx', index=False)
